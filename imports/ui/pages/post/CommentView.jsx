@@ -34,9 +34,25 @@ class CommentView extends React.Component {
             }
         })
     }
+    removeComment(id) {
+        Meteor.call('comment.remove', id, function (err, res) {
+            if (err) {
+                console.log('Register error', err);
+            } else {
+                console.log("Your comment have been removed", res);
+            }
+        })
+    }
 
     render() {
         const comments = this.props.comments;
+        const isLoggedIn = function (id) {
+            if (Meteor.user()._id === id) {
+                return true;
+            } else {
+                return false;
+            }
+        };
         if (this.state.loading) {
             return <div>Waiting for the method</div>
         }
@@ -49,6 +65,15 @@ class CommentView extends React.Component {
                                 <li key={comment._id}>
                                     <div>{comment.text}</div>
                                     <div>{moment(comment.createdAt).format('DD MMM YYYY')}</div>
+                                    <div>
+                                        {isLoggedIn(comment.userId) ? (
+                                            <div>
+                                                <button type="button" className="btn btn-default"
+                                                        onClick={this.removeComment.bind(this, comment._id)}>Remove
+                                                </button>
+                                            </div>
+                                        ) : ''}
+                                    </div>
                                 </li>
                             );
                         })
