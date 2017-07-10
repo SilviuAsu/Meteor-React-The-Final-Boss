@@ -5,6 +5,7 @@ import Posts from "/imports/api/posts/collection.js";
 import route from "/imports/routing/router.js";
 import moment from "moment";
 
+
 class PostList extends React.Component {
     constructor() {
         super();
@@ -41,9 +42,7 @@ class PostList extends React.Component {
                 return false;
             }
         };
-
         return (
-
             <div>
                 <button type="button" className="btn btn-default" onClick={this.handleRedirect.bind(this)}>Create your
                     post!

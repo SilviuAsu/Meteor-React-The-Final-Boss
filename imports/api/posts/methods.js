@@ -1,6 +1,8 @@
 import {Meteor} from "meteor/meteor";
 import Posts from "/imports/api/posts/collection";
 import Security from '/imports/api/security.js';
+import postQuery from '/imports/api/posts/query/getPost';
+import postsQuery from '/imports/api/posts/query/getPosts';
 
 Meteor.methods({
     'post.create' (data) {
@@ -12,10 +14,15 @@ Meteor.methods({
         }
     },
 
+    'post.list' (id) {
+        Security.checkLoggedIn(this.userId);
+        // vezi metoda createQuery
+        return postsQuery.clone({_id: id}).fetch();
+    },
     'post.get' (id) {
         Security.checkLoggedIn(this.userId);
-        return Posts.findOne(id);
-
+        // vezi metoda createQuery
+        return postQuery.clone({_id: id}).fetchOne();
     },
 
     'post.remove' (_id) {
