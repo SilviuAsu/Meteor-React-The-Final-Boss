@@ -1,10 +1,8 @@
 import React from "react";
 import {Meteor} from "meteor/meteor";
-import {createContainer} from "meteor/react-meteor-data";
 import {AutoForm, LongTextField, TextField} from "uniforms-unstyled";
 import PostCreateSchema from "./PostCreateSchema";
 import route from '/imports/routing/router.js';
-
 
 export default class PostsEdit extends React.Component {
     constructor() {

@@ -3,7 +3,6 @@ import {Meteor} from "meteor/meteor";
 import route from '/imports/routing/router.js';
 import {AutoForm, LongTextField} from "uniforms-unstyled";
 import CommentSchema from "/imports/api/comments/schema";
-import {createContainer} from "meteor/react-meteor-data";
 import moment from "moment";
 
 export default class CommentView extends React.Component {
@@ -31,7 +30,7 @@ export default class CommentView extends React.Component {
     }
 
     addComment(data) {
-        Meteor.call('comment.add', this.props.postId, data, (err, res)=> {
+        Meteor.call('comment.add', this.props.postId, data, (err, res) => {
             if (err) {
                 console.log('Register error', err);
             } else {
@@ -40,8 +39,9 @@ export default class CommentView extends React.Component {
             }
         })
     }
+
     removeComment(id) {
-        Meteor.call('comment.remove', id, (err, res)=>{
+        Meteor.call('comment.remove', id, (err, res) => {
             if (err) {
                 console.log('Register error', err);
             } else {
@@ -50,6 +50,7 @@ export default class CommentView extends React.Component {
             }
         })
     }
+
     render() {
         const comments = this.state.comments;
         const isLoggedIn = function (id) {
