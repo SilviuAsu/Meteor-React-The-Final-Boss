@@ -14,10 +14,9 @@ Meteor.methods({
         }
     },
 
-    'post.list' (id) {
+    'post.list' () {
         Security.checkLoggedIn(this.userId);
-        // vezi metoda createQuery
-        return postsQuery.clone({_id: id}).fetch();
+        return postsQuery.clone({}, {sort: {createdAt: -1}}).fetch();
     },
     'post.get' (id) {
         Security.checkLoggedIn(this.userId);

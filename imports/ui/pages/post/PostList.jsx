@@ -1,14 +1,31 @@
 import React from "react";
 import {Meteor} from "meteor/meteor";
-import {createContainer} from "meteor/react-meteor-data";
-import Posts from "/imports/api/posts/collection.js";
 import route from "/imports/routing/router.js";
 import moment from "moment";
+import post from "/imports/api/posts/collection.js";
 
 
-class PostList extends React.Component {
+export default class PostList extends React.Component {
     constructor() {
         super();
+        this.state = {
+            loading: true,
+            posts: []
+        };
+    }
+    componentDidMount() {
+        this.getPosts();
+    }
+
+    getPosts() {
+        Meteor.call('post.list', (err, posts) => {
+             if (!err) {
+                this.setState({
+                    loading: false,
+                    posts
+                });
+            }
+        })
     }
 
     handleRedirect() {
@@ -34,7 +51,7 @@ class PostList extends React.Component {
     }
 
     render() {
-        const posts = this.props.posts;
+        const posts = this.state.posts;
         const isLoggedIn = function (id) {
             if (Meteor.user()._id === id) {
                 return true;
@@ -83,12 +100,3 @@ class PostList extends React.Component {
         );
     }
 }
-
-export default createContainer((props) => {
-    Meteor.subscribe('Posts');
-    const posts = Posts.find({}, {sort: {createdAt: -1}}).fetch();
-    return {
-        posts,
-        ...props
-    };
-}, PostList);
