@@ -3,49 +3,55 @@ import {Meteor} from "meteor/meteor";
 import route from '/imports/routing/router.js';
 import {AutoForm, LongTextField} from "uniforms-unstyled";
 import CommentSchema from "/imports/api/comments/schema";
-import Comments from "/imports/api/comments/collection.js";
 import {createContainer} from "meteor/react-meteor-data";
 import moment from "moment";
 
-class CommentView extends React.Component {
+export default class CommentView extends React.Component {
     constructor() {
         super();
         this.state = {
             loading: true,
             comments: []
-        }
+        };
     }
 
     componentDidMount() {
-        Meteor.call('comment.list', route.current().params.postId, (err, res) => {
-            this.setState({
-                loading: false,
-                comments: res
-            })
+        this.getComments();
+    }
+
+    getComments() {
+        Meteor.call('comment.list', route.current().params.postId, (err, comments) => {
+            if (!err) {
+                this.setState({
+                    loading: false,
+                    comments
+                });
+            }
         })
     }
 
     addComment(data) {
-        Meteor.call('comment.add', this.props.postId, data, function (err, res) {
+        Meteor.call('comment.add', this.props.postId, data, (err, res)=> {
             if (err) {
                 console.log('Register error', err);
             } else {
+                this.getComments();
                 console.log("Your comment have been submitted", res);
             }
         })
     }
     removeComment(id) {
-        Meteor.call('comment.remove', id, function (err, res) {
+        Meteor.call('comment.remove', id, (err, res)=>{
             if (err) {
                 console.log('Register error', err);
             } else {
+                this.getComments();
                 console.log("Your comment have been removed", res);
             }
         })
     }
-
     render() {
-        const comments = this.props.comments;
+        const comments = this.state.comments;
         const isLoggedIn = function (id) {
             if (Meteor.user()._id === id) {
                 return true;
@@ -58,12 +64,13 @@ class CommentView extends React.Component {
         }
         return (
             <div>
-                <div>
+                <ul>
                     {
                         _.map(comments, (comment) => {
                             return (
                                 <li key={comment._id}>
                                     <div>{comment.text}</div>
+                                    <div>{comment.postId}</div>
                                     <div>{moment(comment.createdAt).format('DD MMM YYYY')}</div>
                                     <div>
                                         {isLoggedIn(comment.userId) ? (
@@ -78,7 +85,7 @@ class CommentView extends React.Component {
                             );
                         })
                     }
-                </div>
+                </ul>
                 <AutoForm schema={CommentSchema} onSubmit={this.addComment.bind(this)}>
                     <LongTextField name="text"/>
                     <button type="submit" className="btn btn-default">Add comment</button>
@@ -87,13 +94,3 @@ class CommentView extends React.Component {
         )
     }
 }
-
-export default createContainer((props) => {
-    Meteor.subscribe('Comments');
-    const comments = Comments.find({postId: props.postId}, {sort: {createdAt: -1}}).fetch();
-    return {
-        comments,
-        ...props
-    };
-}, CommentView);
-

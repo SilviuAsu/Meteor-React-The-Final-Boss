@@ -3,7 +3,7 @@ import {Meteor} from "meteor/meteor";
 import {createContainer} from "meteor/react-meteor-data";
 import route from '/imports/routing/router.js';
 import CommentView from "./CommentView";
-import moment from "moment";
+
 
 export default class PostsView extends React.Component {
     constructor() {
@@ -11,7 +11,7 @@ export default class PostsView extends React.Component {
         this.state = {
             loading: true,
             post: []
-        }
+        };
     }
 
     componentDidMount() {
@@ -45,4 +45,3 @@ export default class PostsView extends React.Component {
         )
     }
 }
-

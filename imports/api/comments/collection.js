@@ -1,8 +1,8 @@
 import {Mongo} from 'meteor/mongo';
-import PostSchema from './schema';
+import CommentSchema from './schema';
 
 const Comments = new Mongo.Collection('Comments');
 
-Comments.attachSchema(PostSchema);
+Comments.attachSchema(CommentSchema);
 
 export default Comments;
