@@ -1,6 +1,7 @@
 import {Meteor} from "meteor/meteor";
 import Posts from "/imports/api/posts/collection";
 import Security from '/imports/api/security.js';
+import postLike from "/imports/api/likes/postLike/collection";
 import postQuery from '/imports/api/posts/query/getPost';
 import postsQuery from '/imports/api/posts/query/getPosts';
 
@@ -16,7 +17,14 @@ Meteor.methods({
 
     'post.list' () {
         Security.checkLoggedIn(this.userId);
-        return postsQuery.clone({}, {sort: {createdAt: -1}}).fetch();
+        const posts = postsQuery.clone().fetch();
+        posts.forEach(post=> {
+            const userLike = postLike.findOne({postId: post._id, userId: this.userId});
+            if(userLike) {
+                post.userLike = userLike;
+            }
+        });
+        return posts;
     },
     'post.get' (id) {
         Security.checkLoggedIn(this.userId);
@@ -37,5 +45,4 @@ Meteor.methods({
             }
         });
     }
-
 });
