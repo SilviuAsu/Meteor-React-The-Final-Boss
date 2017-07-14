@@ -16,7 +16,8 @@ Meteor.methods({
 
     'post.list' () {
         Security.checkLoggedIn(this.userId);
-        return postsQuery.clone({}, {sort: {createdAt: -1}}).fetch();
+        const posts = postsQuery.clone().fetch();
+        return posts;
     },
     'post.get' (id) {
         Security.checkLoggedIn(this.userId);
@@ -37,5 +38,4 @@ Meteor.methods({
             }
         });
     }
-
 });
