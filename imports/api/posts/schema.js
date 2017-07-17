@@ -14,5 +14,9 @@ export default new SimpleSchema({
     userId: {
         type: String,
         optional: true,
+    },
+    views: {
+        type: SimpleSchema.Integer,
+        defaultValue: 0
     }
 });

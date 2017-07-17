@@ -4,7 +4,6 @@ import {createContainer} from "meteor/react-meteor-data";
 import route from '/imports/routing/router.js';
 import CommentView from "./CommentView";
 
-
 export default class PostsView extends React.Component {
     constructor() {
         super();
@@ -28,8 +27,7 @@ export default class PostsView extends React.Component {
     }
 
     render() {
-        const title = this.state.post.title;
-        const description = this.state.post.description;
+        const {title, description, views} = this.state.post;
         if (this.state.loading) {
             return <div>Waiting for the method</div>
         }
@@ -38,6 +36,7 @@ export default class PostsView extends React.Component {
                 <button type="button" className="btn btn-default" onClick={this.handleRedirect.bind(this)}>Back to your
                     forces!
                 </button>
+                <h1>Views: {views}</h1>
                 <h1>Main force is: {title}</h1>
                 <h2>Force description: {description}</h2>
                 <CommentView postId={route.current().params.postId}/>

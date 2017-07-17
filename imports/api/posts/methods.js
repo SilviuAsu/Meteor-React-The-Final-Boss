@@ -16,12 +16,11 @@ Meteor.methods({
 
     'post.list' () {
         Security.checkLoggedIn(this.userId);
-        const posts = postsQuery.clone().fetch();
-        return posts;
+        return postsQuery.clone().fetch();
     },
     'post.get' (id) {
         Security.checkLoggedIn(this.userId);
-        // vezi metoda createQuery
+        Posts.update(id, {$inc: {views: 1}});
         return postQuery.clone({_id: id}).fetchOne();
     },
 
