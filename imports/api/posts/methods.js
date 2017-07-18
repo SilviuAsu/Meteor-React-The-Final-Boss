@@ -16,11 +16,11 @@ Meteor.methods({
 
     'post.list' () {
         Security.checkLoggedIn(this.userId);
-        return postsQuery.clone({}, {sort: {createdAt: -1}}).fetch();
+        return postsQuery.clone().fetch();
     },
     'post.get' (id) {
         Security.checkLoggedIn(this.userId);
-        // vezi metoda createQuery
+        Posts.update(id, {$inc: {views: 1}});
         return postQuery.clone({_id: id}).fetchOne();
     },
 
@@ -37,5 +37,4 @@ Meteor.methods({
             }
         });
     }
-
 });

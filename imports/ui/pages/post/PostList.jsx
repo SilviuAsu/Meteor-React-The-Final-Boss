@@ -2,24 +2,24 @@ import React from "react";
 import {Meteor} from "meteor/meteor";
 import route from "/imports/routing/router.js";
 import moment from "moment";
-import post from "/imports/api/posts/collection.js";
-
 
 export default class PostList extends React.Component {
     constructor() {
         super();
         this.state = {
             loading: true,
-            posts: []
+            posts: [],
+            likes: []
         };
     }
+
     componentDidMount() {
         this.getPosts();
     }
 
     getPosts() {
         Meteor.call('post.list', (err, posts) => {
-             if (!err) {
+            if (!err) {
                 this.setState({
                     loading: false,
                     posts
@@ -28,15 +28,25 @@ export default class PostList extends React.Component {
         })
     }
 
-    handleRedirect() {
+    addOrRemoveLike(postId) {
+        Meteor.call('post.like_unlike', postId, (err, like) => {
+            if (err) {
+                return console.log(err);
+            }
+            this.getPosts();
+        });
+
+    }
+
+    goPostCreate() {
         route.go('/post/create');
     }
 
-    handleRedirect1(id) {
+    goPostEdit(id) {
         route.go('/post/:postId/edit', {postId: id});
     }
 
-    handleRedirect2(id) {
+    goPostView(id) {
         route.go('/post/:postId/view', {postId: id});
     }
 
@@ -50,18 +60,19 @@ export default class PostList extends React.Component {
         })
     }
 
+    isPostOwner(postUserId) {
+        return Meteor.userId() === postUserId;
+    }
+
+    getLikeAction(postLike) {
+        return postLike ? 'Unlike' : 'Like';
+    }
+
     render() {
         const posts = this.state.posts;
-        const isLoggedIn = function (id) {
-            if (Meteor.user()._id === id) {
-                return true;
-            } else {
-                return false;
-            }
-        };
         return (
             <div>
-                <button type="button" className="btn btn-default" onClick={this.handleRedirect.bind(this)}>Create your
+                <button type="button" className="btn btn-default" onClick={this.goPostCreate.bind(this)}>Create your
                     post!
                 </button>
                 <ul>
@@ -73,21 +84,29 @@ export default class PostList extends React.Component {
                                     <div>{post.description}</div>
                                     <div>{moment(post.createdAt).format('DD MMM YYYY')}</div>
                                     <div>{post.userId}</div>
+                                    <div>{post.postLikesCount}</div>
+                                    <button type="button" className="btn btn-default"
+                                            onClick={this.addOrRemoveLike.bind(this, post._id)}>{this.getLikeAction.bind(this, post.postLikes)}</button>
                                     <div>
-                                        {isLoggedIn(post.userId) ? (
-                                            <div>
-                                                <button type="button" className="btn btn-default"
-                                                        onClick={this.handleRedirect1.bind(this, post._id)}>Edit
-                                                </button>
-                                                <button type="button" className="btn btn-default"
-                                                        onClick={this.handleRemove.bind(this, post._id)}>Remove
-                                                </button>
-                                            </div>
-                                        ) : ''}
+                                        {this.isPostOwner.bind(this, post.userId)
+                                            ?
+                                            (
+                                                <div>
+                                                    <button type="button" className="btn btn-default"
+                                                            onClick={this.goPostEdit.bind(this, post._id)}>Edit
+                                                    </button>
+                                                    <button type="button" className="btn btn-default"
+                                                            onClick={this.handleRemove.bind(this, post._id)}>Remove
+                                                    </button>
+                                                </div>
+                                            )
+                                            :
+                                            null
+                                        }
                                     </div>
                                     <div>
                                         <button type="button" className="btn btn-default"
-                                                onClick={this.handleRedirect2.bind(this, post._id)}>View Post
+                                                onClick={this.goPostView.bind(this, post._id)}>View Post
                                         </button>
                                     </div>
 

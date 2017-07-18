@@ -1,22 +1,16 @@
 import SimpleSchema from "simpl-schema";
 
 export default new SimpleSchema({
-    title: {
-        type: String
+    postId: {
+        type: String,
+        optional: true
     },
-    description: {
-        type: String
-    },
-    createdAt: {
+    likedAt: {
         type: Date,
         optional: true
     },
     userId: {
         type: String,
         optional: true,
-    },
-    views: {
-        type: SimpleSchema.Integer,
-        defaultValue: 0
     }
 });
